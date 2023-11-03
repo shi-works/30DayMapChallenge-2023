@@ -156,6 +156,141 @@
                 }
             });
 
+            // 鉄道路線ソース
+            map.addSource('railroad', {
+                'type': 'geojson',
+                'data': 'https://xs489works.xsrv.jp/pmtiles-data/ksj/N02-22_RailroadSection.geojson',
+                attribution: '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-v3_1.html">国土数値情報 鉄道データ（令和4年度）</a>'
+            });
+
+            // 鉄道路線ラインレイヤ
+            map.addLayer({
+                'id': 'railroad-lines',
+                'type': 'line',
+                'source': 'railroad',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'butt'
+                },
+                'paint': {
+                    'line-color': 'rgb(255, 255, 255)',
+                    'line-width': 1.5,
+                    'line-opacity': 1
+                }
+            });
+
+            // 役場ソース
+            map.addSource('town-hall', {
+                'type': 'geojson',
+                'data': 'https://xs489works.xsrv.jp/pmtiles-data/ksj/P05-22_01_47_town_hall_add_cityname.geojson',
+                attribution: '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P05-v3_0.html">国土数値情報 市町村役場（令和4年度）</a>'
+            });
+
+            // 役場ポイントレイヤ
+            // 外側の黒い円
+            map.addLayer({
+                'id': 'town-hall-points-outer-1',
+                'type': 'circle',
+                'source': 'town-hall',
+                'minzoom': 9,
+                'maxzoom': 12,
+                'paint': {
+                    'circle-color': 'rgba(0, 0, 0, 1)',
+                    'circle-radius': 5.5,
+                    'circle-blur': 0,
+                    'circle-opacity': 1
+                }
+            });
+
+            // 内側の白い円
+            map.addLayer({
+                'id': 'town-hall-points-inner-1',
+                'type': 'circle',
+                'source': 'town-hall',
+                'minzoom': 9,
+                'maxzoom': 12,
+                'paint': {
+                    'circle-color': 'rgba(255, 255, 255, 1)',
+                    'circle-radius': 4,
+                    'circle-blur': 0,
+                    'circle-opacity': 1
+                }
+            });
+
+            // 外側の黒い円
+            map.addLayer({
+                'id': 'town-hall-points-outer-2',
+                'type': 'circle',
+                'source': 'town-hall',
+                'minzoom': 9,
+                'maxzoom': 12,
+                'paint': {
+                    'circle-color': 'rgba(0, 0, 0, 1)',
+                    'circle-radius': 3,
+                    'circle-blur': 0,
+                    'circle-opacity': 1
+                }
+            });
+
+            // 内側の白い円
+            map.addLayer({
+                'id': 'town-hall-points-inner-2',
+                'type': 'circle',
+                'source': 'town-hall',
+                'minzoom': 9,
+                'maxzoom': 12,
+                'paint': {
+                    'circle-color': 'rgba(255, 255, 255, 1)',
+                    'circle-radius': 2.25,
+                    'circle-blur': 0,
+                    'circle-opacity': 1
+                }
+            });
+
+            // 役場ラベルレイヤ
+            map.addLayer({
+                'id': 'town-hall-labels-1',
+                'type': 'symbol',
+                'source': 'town-hall',
+                minzoom: 9,
+                maxzoom: 12,
+                'layout': {
+                    'text-field': ['get', 'city_name'],
+                    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                    'text-size': 12,
+                    'text-anchor': 'center',
+                    'text-justify': 'center',
+                    'text-offset': [0, -1.0],
+                },
+                'paint': {
+                    'text-color': 'rgba(0, 0, 0, 1)',
+                    'text-halo-color': 'rgba(255, 255, 255, 1)',
+                    'text-halo-width': 1
+                }
+            });
+
+            // 役場ラベルレイヤ
+            map.addLayer({
+                'id': 'town-hall-labels-2',
+                'type': 'symbol',
+                'source': 'town-hall',
+                minzoom: 12,
+                maxzoom: 18,
+                'layout': {
+                    'text-field': ['get', 'city_name'],
+                    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                    'text-size': 18,
+                    'text-anchor': 'center',
+                    'text-justify': 'center',
+                    'text-offset': [0, -1.0],
+                },
+                'paint': {
+                    'text-color': 'rgba(0, 0, 0, 1)',
+                    'text-halo-color': 'rgba(255, 255, 255, 1)',
+                    'text-halo-width': 2
+                }
+            });
+
         });
 
         // 年に応じて色の透明度を計算する関数
@@ -163,8 +298,8 @@
             // 1960年を透明度0.5、2015年を透明度1.0とする
             var minYear = 1960;
             var maxYear = 2015;
-            var startOpacity = 0.5;
-            var endOpacity = 0.8;
+            var startOpacity = 0.4;
+            var endOpacity = 0.7;
             // 透明度を計算する。1960年が0.5、2015年が0.8になるようにする。
             var opacity = startOpacity + (endOpacity - startOpacity) * ((year - minYear) / (maxYear - minYear));
 
@@ -179,20 +314,14 @@
             var color = getColorByYear(year);
 
             // 既存のレイヤーを削除
-            if (map.getLayer('did-polygon')) {
-                map.removeLayer('did-polygon');
-            }
-            // 既存のソースを削除
-            if (map.getSource('did')) {
-                map.removeSource('did');
-            }
-
-            // 新しいソースを追加
-            map.addSource('did', {
-                'type': 'vector',
-                url: "pmtiles://https://xs489works.xsrv.jp/pmtiles-data/ksj/ksj-A16-1960-2015_DID.pmtiles",
-                attribution: '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A16-v2_3.html">国土数値情報 人口集中地区データ</a>'
-            });
+            if (map.getLayer('did-polygon')) { map.removeLayer('did-polygon'); }
+            if (map.getLayer('railroad-lines')) { map.removeLayer('railroad-lines'); }
+            if (map.getLayer('town-hall-points-outer-1')) { map.removeLayer('town-hall-points-outer-1'); }
+            if (map.getLayer('town-hall-points-inner-1')) { map.removeLayer('town-hall-points-inner-1'); }
+            if (map.getLayer('town-hall-points-outer-2')) { map.removeLayer('town-hall-points-outer-2'); }
+            if (map.getLayer('town-hall-points-inner-2')) { map.removeLayer('town-hall-points-inner-2'); }
+            if (map.getLayer('town-hall-labels-1')) { map.removeLayer('town-hall-labels-1'); }
+            if (map.getLayer('town-hall-labels-2')) { map.removeLayer('town-hall-labels-2'); }
 
             // 新しいレイヤーを追加
             map.addLayer({
@@ -202,6 +331,127 @@
                 "type": "fill",
                 "paint": {
                     'fill-color': color
+                }
+            });
+
+            // 鉄道路線ラインレイヤ
+            map.addLayer({
+                'id': 'railroad-lines',
+                'type': 'line',
+                'source': 'railroad',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'butt'
+                },
+                'paint': {
+                    'line-color': 'rgb(255, 255, 255)',
+                    'line-width': 1.5,
+                    'line-opacity': 1
+                }
+            });
+
+            // 役場ポイントレイヤ
+            // 外側の黒い円
+            map.addLayer({
+                'id': 'town-hall-points-outer-1',
+                'type': 'circle',
+                'source': 'town-hall',
+                'minzoom': 9,
+                'maxzoom': 12,
+                'paint': {
+                    'circle-color': 'rgba(0, 0, 0, 1)',
+                    'circle-radius': 5.5,
+                    'circle-blur': 0,
+                    'circle-opacity': 1
+                }
+            });
+
+            // 内側の白い円
+            map.addLayer({
+                'id': 'town-hall-points-inner-1',
+                'type': 'circle',
+                'source': 'town-hall',
+                'minzoom': 9,
+                'maxzoom': 12,
+                'paint': {
+                    'circle-color': 'rgba(255, 255, 255, 1)',
+                    'circle-radius': 4,
+                    'circle-blur': 0,
+                    'circle-opacity': 1
+                }
+            });
+
+            // 外側の黒い円
+            map.addLayer({
+                'id': 'town-hall-points-outer-2',
+                'type': 'circle',
+                'source': 'town-hall',
+                'minzoom': 9,
+                'maxzoom': 12,
+                'paint': {
+                    'circle-color': 'rgba(0, 0, 0, 1)',
+                    'circle-radius': 3,
+                    'circle-blur': 0,
+                    'circle-opacity': 1
+                }
+            });
+
+            // 内側の白い円
+            map.addLayer({
+                'id': 'town-hall-points-inner-2',
+                'type': 'circle',
+                'source': 'town-hall',
+                'minzoom': 9,
+                'maxzoom': 12,
+                'paint': {
+                    'circle-color': 'rgba(255, 255, 255, 1)',
+                    'circle-radius': 2.25,
+                    'circle-blur': 0,
+                    'circle-opacity': 1
+                }
+            });
+
+            // 役場ラベルレイヤ
+            map.addLayer({
+                'id': 'town-hall-labels-1',
+                'type': 'symbol',
+                'source': 'town-hall',
+                minzoom: 9,
+                maxzoom: 12,
+                'layout': {
+                    'text-field': ['get', 'city_name'],
+                    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                    'text-size': 12,
+                    'text-anchor': 'center',
+                    'text-justify': 'center',
+                    'text-offset': [0, -1.0],
+                },
+                'paint': {
+                    'text-color': 'rgba(0, 0, 0, 1)',
+                    'text-halo-color': 'rgba(255, 255, 255, 1)',
+                    'text-halo-width': 1
+                }
+            });
+
+            // 役場ラベルレイヤ
+            map.addLayer({
+                'id': 'town-hall-labels-2',
+                'type': 'symbol',
+                'source': 'town-hall',
+                minzoom: 12,
+                maxzoom: 18,
+                'layout': {
+                    'text-field': ['get', 'city_name'],
+                    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                    'text-size': 18,
+                    'text-anchor': 'center',
+                    'text-justify': 'center',
+                    'text-offset': [0, -1.0],
+                },
+                'paint': {
+                    'text-color': 'rgba(0, 0, 0, 1)',
+                    'text-halo-color': 'rgba(255, 255, 255, 1)',
+                    'text-halo-width': 2
                 }
             });
 
