@@ -152,7 +152,7 @@
                 "type": "fill",
                 "paint": {
                     'fill-color': 'rgb(255, 255, 0)',
-                    'fill-opacity': 0.5
+                    'fill-opacity': 0.7
                 }
             });
 
@@ -192,7 +192,7 @@
                 'id': 'town-hall-points-outer-1',
                 'type': 'circle',
                 'source': 'town-hall',
-                'minzoom': 9,
+                'minzoom': 10,
                 'maxzoom': 12,
                 'paint': {
                     'circle-color': 'rgba(0, 0, 0, 1)',
@@ -207,7 +207,7 @@
                 'id': 'town-hall-points-inner-1',
                 'type': 'circle',
                 'source': 'town-hall',
-                'minzoom': 9,
+                'minzoom': 10,
                 'maxzoom': 12,
                 'paint': {
                     'circle-color': 'rgba(255, 255, 255, 1)',
@@ -222,7 +222,7 @@
                 'id': 'town-hall-points-outer-2',
                 'type': 'circle',
                 'source': 'town-hall',
-                'minzoom': 9,
+                'minzoom': 10,
                 'maxzoom': 12,
                 'paint': {
                     'circle-color': 'rgba(0, 0, 0, 1)',
@@ -237,7 +237,7 @@
                 'id': 'town-hall-points-inner-2',
                 'type': 'circle',
                 'source': 'town-hall',
-                'minzoom': 9,
+                'minzoom': 10,
                 'maxzoom': 12,
                 'paint': {
                     'circle-color': 'rgba(255, 255, 255, 1)',
@@ -293,25 +293,10 @@
 
         });
 
-        // 年に応じて色の透明度を計算する関数
-        function getColorByYear(year) {
-            // 1960年を透明度0.5、2015年を透明度1.0とする
-            var minYear = 1960;
-            var maxYear = 2015;
-            var startOpacity = 0.4;
-            var endOpacity = 0.7;
-            // 透明度を計算する。1960年が0.5、2015年が0.8になるようにする。
-            var opacity = startOpacity + (endOpacity - startOpacity) * ((year - minYear) / (maxYear - minYear));
-
-            // 黄色の色合いを生成し、透明度で濃淡を制御する
-            return `rgba(255, 255, 0, ${opacity})`;
-        }
-
         // スライダーのイベントリスナーに組み込む
         document.getElementById('slider').addEventListener('input', function (e) {
             var year = parseInt(e.target.value);
             var layerID = 'A16_' + year + '_00_DID';
-            var color = getColorByYear(year);
 
             // 既存のレイヤーを削除
             if (map.getLayer('did-polygon')) { map.removeLayer('did-polygon'); }
@@ -330,7 +315,8 @@
                 "source-layer": layerID,
                 "type": "fill",
                 "paint": {
-                    'fill-color': color
+                    'fill-color': 'rgb(255, 255, 0)',
+                    'fill-opacity': 0.7
                 }
             });
 
@@ -356,7 +342,7 @@
                 'id': 'town-hall-points-outer-1',
                 'type': 'circle',
                 'source': 'town-hall',
-                'minzoom': 9,
+                'minzoom': 10,
                 'maxzoom': 12,
                 'paint': {
                     'circle-color': 'rgba(0, 0, 0, 1)',
@@ -371,7 +357,7 @@
                 'id': 'town-hall-points-inner-1',
                 'type': 'circle',
                 'source': 'town-hall',
-                'minzoom': 9,
+                'minzoom': 10,
                 'maxzoom': 12,
                 'paint': {
                     'circle-color': 'rgba(255, 255, 255, 1)',
@@ -386,7 +372,7 @@
                 'id': 'town-hall-points-outer-2',
                 'type': 'circle',
                 'source': 'town-hall',
-                'minzoom': 9,
+                'minzoom': 10,
                 'maxzoom': 12,
                 'paint': {
                     'circle-color': 'rgba(0, 0, 0, 1)',
@@ -401,7 +387,7 @@
                 'id': 'town-hall-points-inner-2',
                 'type': 'circle',
                 'source': 'town-hall',
-                'minzoom': 9,
+                'minzoom': 10,
                 'maxzoom': 12,
                 'paint': {
                     'circle-color': 'rgba(255, 255, 255, 1)',
@@ -461,8 +447,6 @@
 
         // 初期ラベルの設定
         document.getElementById('year_label').textContent = '1960年';
-        // 初期色の設定
-        document.getElementById('slider').dispatchEvent(new Event('input'));
 
     </script>
 </body>
