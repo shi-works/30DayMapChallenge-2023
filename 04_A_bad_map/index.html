@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>3D都市モデルPLATEAU Building(LOD1)</title>
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
+  <script src='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.js'></script>
+  <link href='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.css' rel='stylesheet' />
+  <script src="https://unpkg.com/pmtiles@2.10.0/dist/index.js"></script>
+</head>
+
+<body>
+  <div id="map" style="position:absolute;top:0;left:0;bottom:0;right:0;"></div>
+  <script type="text/javascript">
+    // protocolの設定
+    let protocol = new pmtiles.Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile);
+
+    const style = {
+      "version": 8,
+      "glyphs": "https://maps.gsi.go.jp/xyz/noto-jp/{fontstack}/{range}.pbf",
+      "sprite": new URL("./", location.href) + "tiny-texture-pack-wood",
+      "sources": {
+        "pale": {
+          "type": "raster",
+          "tiles": [
+            "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png"
+          ],
+          "minzoom": 5,
+          "maxzoom": 18,
+          "tileSize": 256,
+          "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>"
+        },
+        "pmtiles-lod1-Building": {
+          "type": "vector",
+          "url": "pmtiles://" + "https://xs489works.xsrv.jp/pmtiles-data/plateau/13100_tokyo-23ku_lod1_Building_Z10_z18.pmtiles",
+          "minzoom": 15,
+          "maxzoom": 18,
+          "attribution": "<a href='https://github.com/shi-works/plateau-lod1-bldg-pmtiles'>plateau-lod1-pmtiles by shi_works</a> (<a href='https://www.geospatial.jp/ckan/dataset/plateau'>国土交通省 Project PLATEAU</a> のデータを加工して作成)"
+        }
+      },
+      "layers": [{
+        "id": "pale",
+        "type": "raster",
+        "source": "pale",
+        "minzoom": 5,
+        "maxzoom": 20
+      }, {
+        "id": "fill-extrusion-bldg",
+        "type": "fill-extrusion",
+        "source": "pmtiles-lod1-Building",
+        "source-layer": "13100_tokyo23ku_lod1_Buildingfgb",
+        "minzoom": 15,
+        "maxzoom": 18,
+        "filter": ["has", "bldg_measuredHeight"],
+        "paint": {
+          "fill-extrusion-pattern": [
+            "let", "index", ["%", ["round", ["*", 10, ["get", "bldg_measuredHeight"]]], 4],
+            [
+              "case",
+              ["==", ["var", "index"], 0],
+              ["image", "wood11"],
+              ["==", ["var", "index"], 1],
+              ["image", "wood24"],
+              ["==", ["var", "index"], 2],
+              ["image", "wood34"],
+              ["image", "wood44"]
+            ]
+          ],
+          "fill-extrusion-height": ["*", ["get", "bldg_measuredHeight"], 1]
+        }
+      }]
+    };
+
+    const map = new maplibregl.Map({
+      "container": "map",
+      "center": [139.697239, 35.689039],
+      "hash": true,
+      "zoom": 15.65,
+      "pitch": 65,
+      "bearing": -25.7,
+      "maxPitch": 85,
+      "attributionControl": false,
+      "style": style
+    });
+
+    // Attributionを折りたたみ表示
+    map.addControl(new maplibregl.AttributionControl({
+      compact: true,
+      customAttribution: '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/30DayMapChallenge-2023" target="_blank">Github</a>） '
+    }));
+  </script>
+</body>
+
+</html>
