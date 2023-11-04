@@ -12,3 +12,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/02_Lines/
 
 ## 03_Ploygons
 https://shi-works.github.io/30DayMapChallenge-2023/03_Polygons/
+
+## 04_A_bad_map
+https://shi-works.github.io/30DayMapChallenge-2023/04_A_bad_map/
