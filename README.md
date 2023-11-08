@@ -21,3 +21,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/05_Asia/
 
 ## 06_Navigation
 https://shi-works.github.io/30DayMapChallenge-2023/06_Navigation/
+
+## 07_Africa
+https://shi-works.github.io/30DayMapChallenge-2023/07_Africa/
