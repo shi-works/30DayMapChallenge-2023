@@ -24,3 +24,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/06_Navigation/
 
 ## 07_Africa
 https://shi-works.github.io/30DayMapChallenge-2023/07_Africa/
+
+## 08_Hexagons
+https://shi-works.github.io/30DayMapChallenge-2023/08_Hexagons/
