@@ -1,0 +1,203 @@
+<html>
+
+<head>
+  <title>令和2年国勢調査 500mメッシュ総人口</title>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    html,
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .deck-tooltip {
+      font-family: Helvetica, Arial, sans-serif;
+      padding: 6px !important;
+      margin: 8px;
+      max-width: 300px;
+      font-size: 20px;
+    }
+
+    #control-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 12px;
+      padding: 20px;
+      font-size: 12px;
+      line-height: 1.5;
+      z-index: 1;
+      background: #fff;
+      font-family: Helvetica, Arial, sans-serif;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+    }
+
+    label {
+      display: inline-block;
+      width: 140px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="control-panel">
+    <div>
+      <label>Radius</label>
+      <input id="radius" type="range" min="500" max="20000" step="100" value="1000"></input>
+      <span id="radius-value"></span>
+    </div>
+    <div>
+      <label>ElevationScale</label>
+      <input id="elevationScale" type="range" min="0" max="500" step="50" value="200"></input>
+      <span id="elevationScale-value"></span>
+    </div>
+    <div>
+      <label>Coverage</label>
+      <input id="coverage" type="range" min="0" max="1" step="0.1" value="1"></input>
+      <span id="coverage-value"></span>
+    </div>
+    <div>
+      <label>opacity</label>
+      <input id="opacity" type="range" min="0" max="1" step="0.01" value="1"></input>
+      <span id="opacity-value"></span>
+    </div>
+  </div>
+  <div id="tooltip"></div>
+  <script>
+    const deckgl = new deck.DeckGL({
+      mapboxApiAccessToken: 'pk.eyJ1Ijoic2hpd29ya3MiLCJhIjoiY2szeHZjeXJsMDJzdDNsbXczdnN1b3hpNiJ9.VQg_5pGbF1qU_6FZ33Uf4g',
+      mapStyle: 'mapbox://styles/mapbox/streets-v9',
+      initialViewState: {
+        latitude: 35.69,
+        longitude: 139.6947,
+        zoom: 9.06,
+        maxZoom: 16,
+        pitch: 45,
+        bearing: 15
+      },
+      controller: true,
+    });
+
+    const OPTIONS = ['radius', 'elevationScale', 'coverage', 'opacity'];
+
+    const colorRange = [
+      [1, 152, 189],
+      [73, 227, 206],
+      [216, 254, 181],
+      [216, 254, 181],
+      [254, 237, 177],
+      [254, 237, 177],
+      [254, 237, 177],
+      [254, 237, 177],
+      [254, 173, 84],
+      [254, 173, 84],
+      [254, 173, 84],
+      [254, 173, 84],
+      [254, 173, 84],
+      [254, 173, 84],
+      [254, 173, 84],
+      [254, 173, 84],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+      [209, 55, 78],
+    ];
+
+    const getValue = (d) => {
+      return Number(d.jinko);
+    };
+
+    const data = d3.csv('R02kokusei_4jimesh_point.csv');
+    const railway = d3.json('N02-19_RailroadSection.geojson');
+
+    const renderLayer = () => {
+      const options = {};
+      OPTIONS.forEach(key => {
+        const value = document.getElementById(key).value;
+        document.getElementById(key + '-value').innerHTML = value;
+        options[key] = Number(value);
+      });
+
+      const hexagonLayer = new deck.HexagonLayer({
+        id: 'hexagonlayer',
+        data,
+        getPosition: d => [Number(d.lng), Number(d.lat)],
+        colorRange,
+        getColorWeight: getValue,
+        getElevationWeight: getValue,
+        elevationScale: 200,
+        extruded: true,
+        pickable: true,
+        radius: 1000,
+        opacity: 1,
+        coverage: 1,
+        upperPercentile: 100,
+        ...options
+      });
+
+      const geoJsonLayer = new deck.GeoJsonLayer({
+        id: 'geojsonlayer',
+        data: railway,
+        stroked: false,
+        filled: false,
+        lineWidthMinPixels: 2,
+        parameters: {
+          depthTest: false
+        },
+        opacity: 0.5,
+        getLineColor: [240, 240, 240],
+        getLineWidth: 2,
+
+        pickable: false,
+      });
+
+      deckgl.setProps({
+        layers: [hexagonLayer, geoJsonLayer],
+        getTooltip: ({ object }) => object && `総人口: ${object.elevationValue}`
+      });
+
+    }
+
+    renderLayer();
+
+    OPTIONS.forEach(key => {
+      document.getElementById(key).oninput = renderLayer;
+    });
+  </script>
+</body>
+
+</html>
