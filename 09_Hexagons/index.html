@@ -42,6 +42,23 @@
       display: inline-block;
       width: 140px;
     }
+
+    #credits {
+      position: absolute;
+      bottom: 0;
+      right: 280px;
+      padding: 2px;
+      font-size: 11px;
+      color: #000000;
+      text-shadow: none;
+      background-color: rgba(255, 255, 255, 0.6);
+      z-index: 1;
+    }
+
+    #credits a {
+      color: #000000;
+      pointer-events: auto;
+    }
   </style>
 </head>
 
@@ -69,7 +86,11 @@
     </div>
   </div>
   <div id="tooltip"></div>
+  <div id="credits"></div>
   <script>
+    const creditsElement = document.getElementById('credits');
+    creditsElement.innerHTML = `<a href="https://nlftp.mlit.go.jp/index.html" target="_blank">国土数値情報</a> | <a href="https://www.e-stat.go.jp/" target="_blank">令和2年国勢調査</a>`;
+
     const deckgl = new deck.DeckGL({
       mapboxApiAccessToken: 'pk.eyJ1Ijoic2hpd29ya3MiLCJhIjoiY2szeHZjeXJsMDJzdDNsbXczdnN1b3hpNiJ9.VQg_5pGbF1qU_6FZ33Uf4g',
       mapStyle: 'mapbox://styles/mapbox/streets-v9',
