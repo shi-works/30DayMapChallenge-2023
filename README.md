@@ -16,14 +16,17 @@ https://shi-works.github.io/30DayMapChallenge-2023/03_Polygons/
 ## 04_A_bad_map
 https://shi-works.github.io/30DayMapChallenge-2023/04_A_bad_map/
 
-## 05_Asia
-https://shi-works.github.io/30DayMapChallenge-2023/05_Asia/
+## 05_Analog_Map
+https://shi-works.github.io/30DayMapChallenge-2023/05_Analog_Map/
 
-## 06_Navigation
-https://shi-works.github.io/30DayMapChallenge-2023/06_Navigation/
+## 06_Asia
+https://shi-works.github.io/30DayMapChallenge-2023/06_Asia/
 
-## 07_Africa
-https://shi-works.github.io/30DayMapChallenge-2023/07_Africa/
+## 07_Navigation
+https://shi-works.github.io/30DayMapChallenge-2023/07_Navigation/
 
-## 08_Hexagons
-https://shi-works.github.io/30DayMapChallenge-2023/08_Hexagons/
+## 08_Africa
+https://shi-works.github.io/30DayMapChallenge-2023/08_Africa/
+
+## 09_Hexagons
+https://shi-works.github.io/30DayMapChallenge-2023/09_Hexagons/
