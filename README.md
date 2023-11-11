@@ -30,3 +30,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/08_Africa/
 
 ## 09_Hexagons
 https://shi-works.github.io/30DayMapChallenge-2023/09_Hexagons/
+
+## 10_North_America
+https://shi-works.github.io/30DayMapChallenge-2023/10_North_America/
