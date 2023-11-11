@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Google 3D tiles example</title>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+    <script src="https://unpkg.com/@luma.gl/shadertools@8.5.20/dist/dist.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #credits {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding: 2px;
+            font-size: 15px;
+            color: white;
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+        }
+
+        #control-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 12px;
+            padding: 10px;
+            font-size: 12px;
+            line-height: 1;
+            z-index: 1;
+            background: #fff;
+            font-family: Helvetica, Arial, sans-serif;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="control-panel">
+        <p><b>sepia</b></p>
+        <div id="sepia-display"></div>
+        <input type="range" min="0" max="1" step="0.1" value="0" id="sepia-slider" />
+    </div>
+    <div id="map"></div>
+    <div id="credits"></div>
+    <script>
+        // 【参考】https://developers.google.com/maps/documentation/tile/use-renderer?hl=ja
+        const GOOGLE_API_KEY = 'AIzaSyBunqvH21z9FY2AOSJf8AO5zSdIpMsneMY';
+        const TILESET_URL = `https://tile.googleapis.com/v1/3dtiles/root.json`;
+        const creditsElement = document.getElementById('credits');
+
+        // 太陽光を作成
+        const sunLight = new deck._SunLight({
+            timestamp: 169967880000,
+            color: [255, 255, 255],
+            intensity: 1.0,
+            _shadow: true // 影を生成
+        });
+
+        // 環境光を作成
+        const ambientLight = new deck.AmbientLight({
+            color: [255, 255, 255],
+            intensity: 1.0,
+        });
+
+        // ライティングエフェクトを作成
+        const lightingEffect = new deck.LightingEffect({ ambientLight, sunLight });
+
+        // ポストエフェクトを作成
+        const postProcessEffect = new deck.PostProcessEffect(sepia, {
+            amount: 0
+        });
+
+        // deck.glのキャンバスを初期化
+        const deckgl = new deck.DeckGL({
+            container: 'map',
+            initialViewState: {
+                latitude: 35.6585805,
+                longitude: 139.742858,
+                zoom: 16,
+                pitch: 60,
+                height: 200
+            },
+            controller: true,
+            effects: [postProcessEffect, lightingEffect],
+            layers: [
+                new deck.Tile3DLayer({
+                    id: 'google-3d-tiles',
+                    data: TILESET_URL,
+                    loadOptions: {
+                        fetch: {
+                            headers: {
+                                'X-GOOG-API-KEY': GOOGLE_API_KEY
+                            }
+                        }
+                    },
+                    onTilesetLoad: tileset3d => {
+                        tileset3d.options.onTraversalComplete = selectedTiles => {
+                            const credits = new Set();
+                            selectedTiles.forEach(tile => {
+                                const { copyright } = tile.content.gltf.asset;
+                                copyright.split(';').forEach(credits.add, credits);
+                                creditsElement.innerHTML = [...credits].join('; ');
+                            });
+                            return selectedTiles;
+                        }
+                    }
+                })
+            ],
+            // 影を表示
+            parameters: {
+                depthTest: true
+            }
+        });
+
+        // スライダーを初期化
+        const Slider = document.getElementById('sepia-slider');
+        const Display = document.getElementById('sepia-display');
+
+        // スライダーの値が変更されたときに実行するイベントリスナーを追加
+        Slider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            postProcessEffect.setProps({
+                amount: value// 効果の強度を変更
+            });
+            Display.innerHTML = value
+            deckgl.redraw(true); // シーンを再描画
+        });
+        Slider.dispatchEvent(new Event('input')); // スライダーのinputイベントを発火
+
+    </script>
+</body>
+
+</html>
