@@ -1,0 +1,163 @@
+<html>
+
+<head>
+  <title>USGS（アメリカ地質調査所）地震データ（1967～2021年）</title>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/deck.gl@^7.0.0/dist.min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+
+  <style>
+    html,
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .deck-tooltip {
+      font-family: Helvetica, Arial, sans-serif;
+      padding: 6px !important;
+      margin: 8px;
+      color: #ffffff;
+      background-color: #4682b4;
+      max-width: 300px;
+      font-size: 20px;
+    }
+
+    #control-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 12px;
+      padding: 20px;
+      font-size: 12px;
+      line-height: 1.5;
+      z-index: 1;
+      background: #fff;
+      font-family: Helvetica, Arial, sans-serif;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+    }
+
+    label {
+      display: inline-block;
+      width: 140px;
+    }
+
+    #credits {
+      position: absolute;
+      bottom: 0;
+      right: 275px;
+      padding: 2px;
+      font-size: 12px;
+      color: #000000;
+      text-shadow: none;
+      background-color: rgba(255, 255, 255, 0.6);
+      z-index: 1;
+    }
+
+    #credits a {
+      color: #000000;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="credits"></div>
+  <div id="control-panel">
+    <div>
+      <label>Intensity</label>
+      <input id="intensity" type="range" min="0" max="5" step="0.1" value="2"></input>
+      <span id="intensity-value"></span>
+    </div>
+    <div>
+      <label>RadiusPixels</label>
+      <input id="radiusPixels" type="range" min="1" max="250" step="1" value="100"></input>
+      <span id="radiusPixels-value"></span>
+    </div>
+    <div>
+      <label>Threshold</label>
+      <input id="threshold" type="range" min="0" max="1" step="0.01" value="0.25"></input>
+      <span id="threshold-value"></span>
+    </div>
+    <div>
+      <label>opacity</label>
+      <input id="opacity" type="range" min="0" max="1" step="0.01" value="1"></input>
+      <span id="opacity-value"></span>
+    </div>
+  </div>
+  <script>
+    const creditsElement = document.getElementById('credits');
+    creditsElement.innerHTML = `<a href="https://www.usgs.gov/programs/earthquake-hazards" target="_blank">Earthquakes courtesy of the U.S. Geological Survey</a>`;
+
+    const deckgl = new deck.DeckGL({
+      mapboxApiAccessToken: 'pk.eyJ1Ijoic2hpd29ya3MiLCJhIjoiY2szeHZjeXJsMDJzdDNsbXczdnN1b3hpNiJ9.VQg_5pGbF1qU_6FZ33Uf4g',
+      mapStyle: 'mapbox://styles/mapbox/dark-v9',
+      initialViewState: {
+        latitude: 53.58,
+        longitude: -95.6,
+        zoom: 2.68,
+        maxZoom: 18,
+        pitch: 0,
+        bearing: 0
+      },
+      controller: true,
+    });
+
+    const OPTIONS = ['intensity', 'radiusPixels', 'threshold', 'opacity'];
+    const earthquakes = d3.csv('https://xs489works.xsrv.jp/pmtiles-data/USGS/earthquakes_1967-01-01-2023-10-31.csv');
+
+    const renderLayer = () => {
+      const options = {};
+      OPTIONS.forEach(key => {
+        const value = document.getElementById(key).value;
+        document.getElementById(key + '-value').innerHTML = value;
+        options[key] = Number(value);
+      });
+
+      const heatmapLayer = new HeatmapLayer({
+        data: earthquakes,
+        id: 'heatmp-layer',
+        pickable: false,
+        getPosition: d => [Number(d.longitude), Number(d.latitude)],
+        getWeight: 1,
+        radiusPixels: 30,
+        intensity: 2.5,
+        threshold: 0.1,
+        opacity: 0.3,
+        ...options
+      });
+
+      const scatterplotLayer = new ScatterplotLayer({
+        id: 'scatter-plot',
+        data: earthquakes,
+        radiusUnits: 'meters',
+        lineWidthUnits: 'meters',
+        radiusScale: 0.1,
+        lineWidthScale: 0.5,
+        stroked: false,
+        filled: true,
+        radiusMinPixels: 0.5,
+        getPosition: d => [Number(d.longitude), Number(d.latitude)],
+        getFillColor: d => [240, 240, 240],
+        getLineColor: d => [0, 250, 0]
+      });
+
+      deckgl.setProps({
+        layers: [heatmapLayer, scatterplotLayer]
+      });
+
+    }
+
+    renderLayer();
+
+    OPTIONS.forEach(key => {
+      document.getElementById(key).oninput = renderLayer;
+    });
+  </script>
+</body>
+
+</html>
