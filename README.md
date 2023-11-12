@@ -36,3 +36,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/10_North_America/
 
 ## 11_Retro
 https://shi-works.github.io/30DayMapChallenge-2023/11_Retro/
+
+## 12_South_America
+https://shi-works.github.io/30DayMapChallenge-2023/12_South_America/
