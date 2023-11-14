@@ -71,3 +71,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/13_Choropleth/
 
 ## 14_Europe
 https://shi-works.github.io/30DayMapChallenge-2023/14_Europe/
+
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/1de35f59-812f-42bf-b897-cfe6221d141c)
+
