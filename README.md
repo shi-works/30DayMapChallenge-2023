@@ -27,14 +27,22 @@ https://shi-works.github.io/30DayMapChallenge-2023/04_A_bad_map/
 ## 05_Analog_Map
 https://shi-works.github.io/30DayMapChallenge-2023/05_Analog_Map/
 
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/b464b819-5777-49f9-9996-65634cc3c7b1)
+
 ## 06_Asia
 https://shi-works.github.io/30DayMapChallenge-2023/06_Asia/
+
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/ab36d906-b531-4be6-b31e-b73fd19b4252)
 
 ## 07_Navigation
 https://shi-works.github.io/30DayMapChallenge-2023/07_Navigation/
 
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/31ca5a41-6223-4f5f-921b-d9f58c64cb14)
+
 ## 08_Africa
 https://shi-works.github.io/30DayMapChallenge-2023/08_Africa/
+
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/ceb6ecc1-f52e-47d4-81d9-d1a05f08ec9f)
 
 ## 09_Hexagons
 https://shi-works.github.io/30DayMapChallenge-2023/09_Hexagons/
