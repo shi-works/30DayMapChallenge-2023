@@ -47,17 +47,27 @@ https://shi-works.github.io/30DayMapChallenge-2023/08_Africa/
 ## 09_Hexagons
 https://shi-works.github.io/30DayMapChallenge-2023/09_Hexagons/
 
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/3d1b8105-0f7b-447f-ac9f-c7fb58ee89cd)
+
 ## 10_North_America
 https://shi-works.github.io/30DayMapChallenge-2023/10_North_America/
+
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/fb5d65b4-dbfd-4bb1-a0ba-72b19e399ace)
 
 ## 11_Retro
 https://shi-works.github.io/30DayMapChallenge-2023/11_Retro/
 
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/81ede66c-478a-465d-ba7a-e48b71382124)
+
 ## 12_South_America
 https://shi-works.github.io/30DayMapChallenge-2023/12_South_America/
 
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/4d43766c-9bd4-4166-a73a-afb2f57cff94)
+
 ## 13_Choropleth
 https://shi-works.github.io/30DayMapChallenge-2023/13_Choropleth/
+
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/d6947b3f-6fa6-4fd0-8783-ddb2d5b4b033)
 
 ## 14_Europe
 https://shi-works.github.io/30DayMapChallenge-2023/14_Europe/
