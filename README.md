@@ -7,6 +7,8 @@ https://30daymapchallenge.com/
 ## 01_Points
 https://shi-works.github.io/30DayMapChallenge-2023/01_Points/
 
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/9a33a9e9-fbc9-47e9-8e86-17145d5e323e)
+
 ## 02_Lines
 https://shi-works.github.io/30DayMapChallenge-2023/02_Lines/
 
