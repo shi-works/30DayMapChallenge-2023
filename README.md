@@ -39,3 +39,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/11_Retro/
 
 ## 12_South_America
 https://shi-works.github.io/30DayMapChallenge-2023/12_South_America/
+
+## 13_Choropleth
+https://shi-works.github.io/30DayMapChallenge-2023/13_Choropleth/
