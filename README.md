@@ -79,3 +79,5 @@ https://shi-works.github.io/30DayMapChallenge-2023/15_OpenStreetMap/
 
 ![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/0158b41e-7069-440e-82ae-4d1fa8594d8e)
 
+## 16_Oceania
+https://shi-works.github.io/30DayMapChallenge-2023/16_Oceania/
