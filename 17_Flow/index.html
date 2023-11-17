@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GTFS-RT時系列アニメーション</title>
+    <meta charset="utf-8" />
+    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #credits {
+            position: absolute;
+            bottom: 0;
+            right: 310px;
+            padding: 2px;
+            font-size: 11px;
+            color: #000000;
+            text-shadow: none;
+            background-color: rgba(255, 255, 255, 0.5);
+            z-index: 1;
+        }
+
+        #credits a {
+            color: #000000;
+            pointer-events: auto;
+        }
+
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #controls div {
+            margin-top: 10px;
+        }
+
+        #sliderContainer {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #controls button,
+        #sliderContainer label {
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+        }
+
+        #controls button {
+            margin-right: 5px;
+        }
+
+        #speedSlider {
+            width: 150px;
+        }
+
+        #currentTime,
+        #timeValue {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="credits"></div>
+    <div id="controls">
+        <div id="currentTime">Current time: <span id="timeValue"></span></div>
+        <div>
+            <button id="playBtn">Play</button>
+            <button id="stopBtn">Stop</button>
+        </div>
+        <div id="sliderContainer">
+            <label for="speedSlider">Speed:</label>
+            <input id="speedSlider" type="range" min="1" max="10" value="5">
+        </div>
+    </div>
+
+    <script>
+        // クレジット
+        const creditsElement = document.getElementById('credits');
+        creditsElement.innerHTML = `<a href="https://creativecommons.org/licenses/by/4.0/deed.ja">東京都交通局・公共交通ｵｰﾌﾟﾝﾃﾞｰﾀ協議会、ﾊﾞｽﾛｹｰｼｮﾝ情報(GTFS-RT形式)、ｸﾘｴｲﾃｨﾌﾞ･ｺﾓﾝｽﾞ･ﾗｲｾﾝｽ 表示4.0国際</a> | <a href="https://github.com/indigo-lab/plateau-lod2-mvt" target="_blank">indigo-lab(plateau-lod2-mvt)</a>`;
+
+        // GTFSリアルタイムデータ
+        const gtfsrt = d3.json('ToeiBus_VehiclePosition.json');
+        const shapes = d3.json('ToeiBus_shapes.geojson');
+
+        // アニメーションループの長さと速度、高さのオフセットを設定
+        const LOOP_LENGTH = 6000;
+        let ANIMATION_SPEED = 5;
+        const HEIGHT_OFFSET = 50;
+
+        let isAnimationRunning = false;
+
+        // 時間を初期化
+        let time = 0;
+
+        // アニメーション関数
+        function animate() {
+            // アニメーションが停止されていたら処理を終了
+            if (!isAnimationRunning) return;
+
+            // 時間を進行させる
+            time = (time + ANIMATION_SPEED) % LOOP_LENGTH;
+
+            // 次のフレームを要求する
+            window.requestAnimationFrame(animate);
+        }
+
+        // 初期化関数
+        async function initialize() {
+            // DeckGLインスタンスを生成
+            const deckgl = new deck.DeckGL({
+                container: 'map',
+                mapStyle: './dark.json',
+                initialViewState: {
+                    latitude: 35.6812362,
+                    longitude: 139.7671248,
+                    zoom: 12,
+                    bearing: 0,
+                    pitch: 0,
+                    maxPitch: 60,
+                    height: 200
+                },
+                controller: true
+            });
+
+            // 一定間隔（50ms）でレイヤーを更新する
+            setInterval(() => {
+                deckgl.setProps({
+                    layers: [
+                        new deck.GeoJsonLayer({
+                            id: 'geojson-layer',
+                            data: shapes,
+                            stroked: false,
+                            filled: false,
+                            lineWidthMinPixels: 1,
+                            parameters: {
+                                depthTest: false
+                            },
+                            opacity: 0.1,
+                            getLineColor: [255, 255, 255],
+                            getLineWidth: 0.1,
+                            pickable: false,
+                        }),
+                        // GTFS-RTを描画するレイヤ
+                        new deck.TripsLayer({
+                            id: 'trips-layer',
+                            data: gtfsrt,
+                            getPath: d => d.path.map(coord => [coord[0], coord[1], HEIGHT_OFFSET]), // 経路を取得
+                            getTimestamps: d => d.timestamps.map(p => p - 1684378982), // タイムスタンプを取得
+                            getColor: [0, 255, 0],
+                            getWidth: 2,
+                            opacity: 1,
+                            widthMinPixels: 6,
+                            rounded: true,
+                            fadeTrail: true, // フェードトレイルを有効
+                            trailLength: 200, // トレイルの長さを設定
+                            currentTime: time,
+                            shadowEnabled: false,
+                            material: {
+                                polygonOffset: [-1, -1]
+                            }
+                        }),
+                        // 3D都市モデルPLATEAU建物（LOD2）を描画するレイヤ
+                        new deck.MVTLayer({
+                            id: 'mvtlayer',
+                            data: `https://indigo-lab.github.io/plateau-lod2-mvt/{z}/{x}/{y}.pbf`,
+                            minZoom: 0,
+                            maxZoom: 23,
+                            opacity: 0.1,
+                            getFillColor: [255, 255, 255],
+                            lineWidthMinPixels: 1,
+                            pickable: true,
+                            extruded: true,
+                            getElevation: d => d.properties.z,
+                            wireframe: true,
+                            lineWidthMinPixels: 1,
+                            getLineColor: [0, 0, 0]
+                        })
+                    ]
+                });
+
+                let currentUnixTime = 1684378982 + time;
+                let currentDate = new Date(currentUnixTime * 1000);
+                document.getElementById('timeValue').textContent = currentDate.toLocaleString();
+
+            }, 50);
+
+            // アニメーションを開始
+            window.requestAnimationFrame(animate);
+        }
+
+        window.onload = function () {
+            // ボタンとスライダーにイベントリスナーを追加
+            document.getElementById('playBtn').addEventListener('click', () => {
+                isAnimationRunning = true;
+                animate();
+            });
+
+            document.getElementById('stopBtn').addEventListener('click', () => {
+                isAnimationRunning = false;
+            });
+
+            document.getElementById('speedSlider').addEventListener('input', (e) => {
+                ANIMATION_SPEED = Number(e.target.value);
+            });
+
+            // 初期化関数を実行
+            initialize();
+        };
+    </script>
+</body>
+
+</html>
