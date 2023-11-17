@@ -86,3 +86,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/16_Oceania/
 
 ## 17_Flow
 https://shi-works.github.io/30DayMapChallenge-2023/17_Flow/
+
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/d21d7038-aaea-4109-818b-998240136a0c)
+
