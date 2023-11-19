@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <title>気象庁 高解像度降水ナウキャスト</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <script src='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.js'></script>
-    <link href='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.css' rel='stylesheet' />
+    <script src='https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css' rel='stylesheet' />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.min.js"></script>
@@ -245,10 +245,10 @@
                             "minzoom": 2,
                             "maxzoom": 8,
                             "layout": {
-                                "visibility": "none"
+                                "visibility": "visible"
                             },
                             "paint": {
-                                "raster-opacity": 0.8
+                                "raster-opacity": 0
                             }
                         });
                     }
@@ -258,6 +258,21 @@
                 const slider = document.getElementById('slider');
                 slider.max = data.length - 1;
                 console.log("Slider max value: " + slider.max);
+
+                function setVisible(map, layerId, isVisible, options = { performance: false }) {
+                    const layer = map.getLayer(layerId);
+                    if (!layer) return;
+
+                    if (layer.type === 'raster' || layer.type === 'fill' || layer.type === 'circle' || layer.type === 'line') {
+                        if (layer.type === 'raster') {
+                            map.setPaintProperty(layerId, 'raster-opacity-transition', { duration: 0 });
+                        }
+                        let opacity = isVisible ? 0.8 : (options.performance ? 0.000000000000000000001 : 0);
+                        map.setPaintProperty(layerId, `${layer.type}-opacity`, opacity);
+                    } else {
+                        map.setLayoutProperty(layerId, 'visibility', isVisible ? 'visible' : 'none');
+                    }
+                }
 
                 // スライダーでレイヤの表示・非表示の切り替え
                 slider.addEventListener('input', (event) => {
@@ -285,11 +300,13 @@
 
                     // 全レイヤーを非表示にする
                     data.forEach((_, idx) => {
-                        map.setLayoutProperty(`jma-nowc-${idx}`, 'visibility', 'none');
+                        // map.setLayoutProperty(`jma-nowc-${idx}`, 'visibility', 'none');
+                        setVisible(map, `jma-nowc-${idx}`, false);
                     });
 
                     // 選択されたレイヤーを表示
-                    map.setLayoutProperty(`jma-nowc-${index}`, 'visibility', 'visible');
+                    // map.setLayoutProperty(`jma-nowc-${index}`, 'visibility', 'visible');
+                    setVisible(map, `jma-nowc-${index}`, true);
 
                     map.painter.context.extTextureFilterAnisotropic = null
 
@@ -306,7 +323,7 @@
                             slider.value = 0;
                         }
                         slider.dispatchEvent(new Event('input'));
-                    }, 500); // 0.5秒ごとにスライダーの値を増やす
+                    }, 200); // 0.2秒ごとにスライダーの値を増やす
                 });
 
                 document.getElementById('stop').addEventListener('click', () => {
