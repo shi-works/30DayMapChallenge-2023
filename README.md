@@ -94,3 +94,8 @@ https://shi-works.github.io/30DayMapChallenge-2023/18_Atmosphere/
 
 https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/1239e484-767d-4e13-9bc7-839a3a9f170f
 
+## 19_5-minute-map
+https://shi-works.github.io/30DayMapChallenge-2023/19_5-minute-map/
+
+https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/97dca35b-50ff-485c-86fc-b2cf8b912c70
+
