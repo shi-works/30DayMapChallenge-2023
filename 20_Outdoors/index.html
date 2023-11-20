@@ -105,7 +105,8 @@
             });
 
             var demSource = new mlcontour.DemSource({
-                url: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+                // url: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+                url: "https://tiles.stadiamaps.com/data/terrarium/{z}/{x}/{y}.png",
                 encoding: "terrarium", // "mapbox" or "terrarium" default="terrarium"
                 maxzoom: 18,
                 worker: true, // offload isoline computation to a web worker to reduce jank
