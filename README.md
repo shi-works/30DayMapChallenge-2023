@@ -99,3 +99,5 @@ https://shi-works.github.io/30DayMapChallenge-2023/19_5-minute-map/
 
 https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/97dca35b-50ff-485c-86fc-b2cf8b912c70
 
+## 20_Outdoors
+https://shi-works.github.io/30DayMapChallenge-2023/20_Outdoors/
