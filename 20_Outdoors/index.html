@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.js'></script>
     <link href='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.css' rel='stylesheet' />
-    <script src="https://unpkg.com/pmtiles@2.10.0/dist/index.js"></script>
     <script src="https://unpkg.com/maplibre-contour@0.0.4/dist/index.min.js"></script>
     <style>
         body {
@@ -23,10 +22,6 @@
 <body>
     <div id="map"></div>
     <script type="text/javascript">
-        // protocolの設定
-        let protocol = new pmtiles.Protocol();
-        maplibregl.addProtocol("pmtiles", protocol.tile);
-
         // マップの初期化
         const map = new maplibregl.Map({
             container: 'map',
@@ -84,8 +79,8 @@
             // Mapzen標高タイルソース
             map.addSource("mapzen", {
                 type: 'raster-dem',
-                // tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
-                tiles: ['https://tiles.stadiamaps.com/data/terrarium/{z}/{x}/{y}.png'],
+                tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+                // tiles: ['https://tiles.stadiamaps.com/data/terrarium/{z}/{x}/{y}.png'],
                 attribution: '<a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md">Tilezen Joerd: Attribution</a>',
                 "encoding": "terrarium"
             });
@@ -105,8 +100,8 @@
             });
 
             var demSource = new mlcontour.DemSource({
-                // url: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
-                url: "https://tiles.stadiamaps.com/data/terrarium/{z}/{x}/{y}.png",
+                url: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+                // url: "https://tiles.stadiamaps.com/data/terrarium/{z}/{x}/{y}.png",
                 encoding: "terrarium", // "mapbox" or "terrarium" default="terrarium"
                 maxzoom: 18,
                 worker: true, // offload isoline computation to a web worker to reduce jank
