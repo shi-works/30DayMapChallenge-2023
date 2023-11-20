@@ -16,11 +16,53 @@
             height: 100%;
             width: 100%;
         }
+
+        .map-overlay {
+            font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            position: absolute;
+            width: 200px;
+            bottom: 20px;
+            left: 0;
+            padding: 10px;
+        }
+
+        .map-overlay .map-overlay-inner {
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .map-overlay label {
+            display: block;
+            margin: 0 0 0px;
+            font-size: 12px;
+            top: 100px;
+            left: 10px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .map-overlay input {
+            background-color: transparent;
+            display: inline-block;
+            width: 100%;
+            position: relative;
+            margin: 0;
+            cursor: ew-resize;
+        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
+    <div class="map-overlay top">
+        <div class="map-overlay-inner">
+            <label>地形の高さを強調する倍率: <span id="exaggeration-slider-opacity-value">4倍</span></label>
+            <input id="exaggeration-slider-opacity" type="range" min="0" max="10" step="1" value="4">
+        </div>
+    </div>
     <script type="text/javascript">
         // マップの初期化
         const map = new maplibregl.Map({
@@ -67,6 +109,7 @@
             customAttribution: '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/30DayMapChallenge-2023">Github</a>） '
         }));
 
+        /*
         // 3D地形コントロール
         map.addControl(
             new maplibregl.TerrainControl({
@@ -74,6 +117,7 @@
                 exaggeration: 4 // 標高を強調する倍率
             })
         );
+        */
 
         map.on('load', () => {
             // Mapzen標高タイルソース
@@ -87,6 +131,16 @@
 
             // Mapzen標高タイルセット
             map.setTerrain({ 'source': 'mapzen', 'exaggeration': 4 });
+
+            // スライダーでシームレス標高タイルの高さの倍率を制御
+            const exaggeration_sliderOpacity = document.getElementById('exaggeration-slider-opacity');
+            const exaggeration_sliderOpacityValue = document.getElementById('exaggeration-slider-opacity-value');
+
+            exaggeration_sliderOpacity.addEventListener('input', (e) => {
+                const exaggerationValue = parseFloat(e.target.value);
+                map.setTerrain({ 'source': 'mapzen', 'exaggeration': exaggerationValue });
+                exaggeration_sliderOpacityValue.textContent = e.target.value + '倍';
+            });
 
             // Mapzen陰影起伏図レイヤ
             map.addLayer({
