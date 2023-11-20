@@ -1,0 +1,181 @@
+<html>
+
+<head>
+    <title>Mapzen Terrain Tiles Demo</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.css' rel='stylesheet' />
+    <script src="https://unpkg.com/pmtiles@2.10.0/dist/index.js"></script>
+    <script src="https://unpkg.com/maplibre-contour@0.0.4/dist/index.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script type="text/javascript">
+        // protocolの設定
+        let protocol = new pmtiles.Protocol();
+        maplibregl.addProtocol("pmtiles", protocol.tile);
+
+        // マップの初期化
+        const map = new maplibregl.Map({
+            container: 'map',
+            // style: 'https://tile2.openstreetmap.jp/styles/osm-bright/style.json',
+            style: 'https://tile.openstreetmap.jp/styles/maptiler-basic-ja/style.json',
+            // style: './style-light.json',
+            zoom: 6.52,
+            minZoom: 1,
+            maxZoom: 23,
+            pitch: 0,
+            maxPitch: 85,
+            bearing: 0,
+            center: [-18.952, 65.005],
+            hash: true,
+            attributionControl: false
+        });
+
+        // ズーム・回転
+        map.addControl(new maplibregl.NavigationControl());
+
+        // フルスクリーンモードのオンオフ
+        map.addControl(new maplibregl.FullscreenControl());
+
+        // 現在位置表示
+        map.addControl(new maplibregl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: false
+            },
+            fitBoundsOptions: { maxZoom: 18 },
+            trackUserLocation: true,
+            showUserLocation: true
+        }));
+
+        // スケール表示
+        map.addControl(new maplibregl.ScaleControl({
+            maxWidth: 200,
+            unit: 'metric'
+        }));
+
+        // Attributionを折りたたみ表示
+        map.addControl(new maplibregl.AttributionControl({
+            compact: true,
+            customAttribution: '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/30DayMapChallenge-2023">Github</a>） '
+        }));
+
+        // 3D地形コントロール
+        map.addControl(
+            new maplibregl.TerrainControl({
+                source: 'mapzen',
+                exaggeration: 4 // 標高を強調する倍率
+            })
+        );
+
+        map.on('load', () => {
+            // Mapzen標高タイルソース
+            map.addSource("mapzen", {
+                type: 'raster-dem',
+                // tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+                tiles: ['https://tiles.stadiamaps.com/data/terrarium/{z}/{x}/{y}.png'],
+                attribution: '<a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md">Tilezen Joerd: Attribution</a>',
+                "encoding": "terrarium"
+            });
+
+            // Mapzen標高タイルセット
+            map.setTerrain({ 'source': 'mapzen', 'exaggeration': 4 });
+
+            // Mapzen陰影起伏図レイヤ
+            map.addLayer({
+                "id": "hillshade",
+                "type": "hillshade",
+                "source": "mapzen",
+                "minzoom": 1,
+                "maxzoom": 18,
+                layout: { visibility: 'visible' },
+                paint: { 'hillshade-shadow-color': '#473B24' },
+            });
+
+            var demSource = new mlcontour.DemSource({
+                url: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+                encoding: "terrarium", // "mapbox" or "terrarium" default="terrarium"
+                maxzoom: 18,
+                worker: true, // offload isoline computation to a web worker to reduce jank
+                cacheSize: 100, // number of most-recent tiles to cache
+                timeoutMs: 10_000, // timeout on fetch requests
+            });
+            demSource.setupMaplibre(maplibregl);
+
+            map.addSource("contour-source", {
+                type: "vector",
+                tiles: [
+                    demSource.contourProtocolUrl({
+                        // convert meters to feet, default=1 for meters
+                        multiplier: 1,
+                        thresholds: {
+                            // zoom: [minor, major]
+                            6: [100, 200],
+                            7: [50, 100],
+                            8: [50, 100],
+                            9: [20, 100],
+                            10: [20, 100],
+                            11: [10, 50],
+                            12: [10, 50],
+                            14: [5, 50],
+                            15: [5, 20],
+                        },
+                        // optional, override vector tile parameters:
+                        contourLayer: "contours",
+                        elevationKey: "ele",
+                        levelKey: "level",
+                        extent: 4096,
+                        buffer: 1,
+                    }),
+                ],
+                maxzoom: 18,
+            });
+
+            map.addLayer({
+                id: "contour-lines",
+                type: "line",
+                source: "contour-source",
+                "source-layer": "contours",
+                paint: {
+                    "line-color": "rgba(0, 0, 0, 0.5)",
+                    // level = highest index in thresholds array the elevation is a multiple of
+                    "line-width": ["match", ["get", "level"], 1, 1, 0.5],
+                },
+            });
+
+            map.addLayer({
+                id: "contour-labels",
+                type: "symbol",
+                source: "contour-source",
+                "source-layer": "contours",
+                // filter: [">", ["get", "level"], 0],
+                layout: {
+                    "symbol-placement": "line",
+                    "text-size": 12,
+                    "text-field": ["concat", ["number-format", ["get", "ele"], {}], "m"],
+                    "text-font": ["Noto Sans Bold"],
+                },
+                paint: {
+                    "text-color": "white",
+                    "text-halo-color": "black",
+                    "text-halo-width": 1,
+                },
+            });
+
+        });
+    </script>
+</body>
+
+</html>
