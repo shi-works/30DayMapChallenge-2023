@@ -101,3 +101,5 @@ https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/97dca35b-50f
 
 ## 20_Outdoors
 https://shi-works.github.io/30DayMapChallenge-2023/20_Outdoors/
+
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/4de500c7-766e-42f7-89e6-cb8c51b29b5e)
