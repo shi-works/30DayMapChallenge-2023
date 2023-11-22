@@ -1,0 +1,276 @@
+<html>
+
+<head>
+    <title>西之島 3D地形マップ</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.css' rel='stylesheet' />
+    <script src="https://unpkg.com/pmtiles@2.10.0/dist/index.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .map-overlay {
+            font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            position: absolute;
+            width: 200px;
+            top: 10px;
+            left: 0;
+            padding: 10px;
+        }
+
+        .map-overlay .map-overlay-inner {
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .map-overlay label {
+            display: block;
+            margin: 0 0 0px;
+            font-size: 14px;
+            top: 100px;
+            left: 10px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .map-overlay input {
+            background-color: transparent;
+            display: inline-block;
+            width: 100%;
+            position: relative;
+            margin: 0;
+            cursor: ew-resize;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div class="map-overlay top">
+        <div class="map-overlay-inner">
+            <h2>西之島付近噴火活動</h2>
+            <label>撮影時期: <span id="slider-value">2013年12月04日</span></label>
+            <input id="slider" type="range" min="1" max="13" step="1" value="1">
+        </div>
+    </div>
+    <script type="module">
+
+        // Terrain-RGB形式への変換モジュール
+        import { makeNumPngProtocol } from './numPngProtocol.js'
+
+        // protocolを設定
+        let protocol = new pmtiles.Protocol();
+        maplibregl.addProtocol("pmtiles", protocol.tile);
+
+        // マップの初期化
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'std.json',
+            zoom: 14.69,
+            minZoom: 1,
+            maxZoom: 23,
+            pitch: 0,
+            bearing: 0,
+            maxPitch: 85,
+            center: [140.88132, 27.24691],
+            hash: true,
+            attributionControl: false
+        });
+
+        // ズーム・回転
+        map.addControl(new maplibregl.NavigationControl());
+
+        // フルスクリーンモードのオンオフ
+        map.addControl(new maplibregl.FullscreenControl());
+
+        // 現在位置表示
+        map.addControl(new maplibregl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: false
+            },
+            fitBoundsOptions: { maxZoom: 18 },
+            trackUserLocation: true,
+            showUserLocation: true
+        }));
+
+        // スケール表示
+        map.addControl(new maplibregl.ScaleControl({
+            maxWidth: 200,
+            unit: 'metric'
+        }));
+
+        // Attributionを折りたたみ表示
+        map.addControl(new maplibregl.AttributionControl({
+            compact: true,
+            customAttribution: '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/aist-dem-with-relief-on-maplibre-gl-js" target="_blank">Github</a>） '
+        }));
+
+        // 3D地形コントロール
+        map.addControl(
+            new maplibregl.TerrainControl({
+                source: 'aist-dem',
+                exaggeration: 1 // 標高を強調する倍率
+            })
+        );
+
+        map.on('load', () => {
+            // 産総研 シームレス標高タイルソース
+            map.addSource("aist-dem", {
+                type: 'raster-dem',
+                tiles: [
+                    'numpng://tiles.gsj.jp/tiles/elev/gsi20131204dd5/{z}/{y}/{x}.png',
+                ],
+                attribution: '<a href="https://tiles.gsj.jp/tiles/elev/tiles.html#h_gsinishinoshima" target="_blank">産業技術総合研究所 シームレス標高タイル(西之島付近噴火活動)</a>',
+                tileSize: 256
+            });
+
+            // 産総研 シームレス標高タイルセット
+            // map.setTerrain({ 'source': 'aist-dem', 'exaggeration': 1 });
+
+            // 西之島付近噴火活動 正射画像ソース
+            map.addSource("gsi-ortho", {
+                "type": "raster",
+                "tiles": [
+                    "https://cyberjapandata.gsi.go.jp/xyz/20131204doh/{z}/{x}/{y}.png"
+                ],
+                "attribution": "<a href='https://maps.gsi.go.jp/development/ichiran.html#t20230202_nishinoshima_dol' target='_blank'>地理院タイル（西之島付近噴火活動 正射画像（2013年12月04日））</a>",
+                "tileSize": 256
+            });
+
+            // 西之島付近噴火活動 正射画像レイヤ
+            map.addLayer({
+                id: 'gsi-ortho',
+                type: 'raster',
+                source: 'gsi-ortho',
+                minzoom: 10,
+                maxzoom: 18,
+                paint: {
+                    'raster-opacity': 1
+                }
+            });
+
+            map.showTileBoundaries = false;
+
+        })
+
+        // 標高タイルレイヤ設定
+        let dem_layer = {
+            1: 'gsi20131204dd5',
+            2: 'gsi20131217dd5',
+            3: 'gsi20140216dd5',
+            4: 'gsi20140322dd5',
+            5: 'gsi20140704dd5',
+            6: 'gsi20141204dd5',
+            7: 'gsi20150301dd5',
+            8: 'gsi20150728dd5',
+            9: 'gsi20151209dd5',
+            10: 'gsi20160303dd5',
+            11: 'gsi20160725dd5',
+            12: 'gsi20180117dd5',
+            13: 'gsi20230202dd5',
+        };
+
+        // 正射画像レイヤ設定
+        let ortho_layer = {
+            1: '20131204doh',
+            2: '20131217doh',
+            3: '20140216doh',
+            4: '20140322dol',
+            5: '20140704dol',
+            6: '20141204doh',
+            7: '20150301doh',
+            8: '20150728dol',
+            9: '20151209dol',
+            10: '20160303dol',
+            11: '20160725dol',
+            12: '20180117dol',
+            13: '20230202_nishinoshima_dol',
+        };
+
+        // 撮影時期
+        let date = {
+            1: '2013年12月04日',
+            2: '2013年12月17日',
+            3: '2014年02月16日',
+            4: '2014年03月22日',
+            5: '2014年07月04日',
+            6: '2014年12月04日',
+            7: '2015年03月01日',
+            8: '2015年07月28日',
+            9: '2015年12月09日',
+            10: '2016年03月03日',
+            11: '2016年07月25日',
+            12: '2018年01月17日',
+            13: '2023年02月02日',
+        };
+
+        // スライダーで切り替え制御
+        document.getElementById('slider').addEventListener('input', function (e) {
+            let index = parseInt(e.target.value);
+            // console.log(index)
+            // console.log(dem_layer[index])
+            // console.log(ortho_layer[index])
+            // console.log(date[index])
+
+            // 一旦、レイヤとソースを削除
+            map.removeSource('aist-dem');
+            map.removeLayer('gsi-ortho');
+            map.removeSource('gsi-ortho');
+
+            // 産総研 シームレス標高タイルソース
+            map.addSource("aist-dem", {
+                type: 'raster-dem',
+                tiles: [
+                    'numpng://tiles.gsj.jp/tiles/elev/' + dem_layer[index] + '/{z}/{y}/{x}.png',
+                ],
+                attribution: '<a href="https://tiles.gsj.jp/tiles/elev/tiles.html#h_gsinishinoshima" target="_blank">産業技術総合研究所 シームレス標高タイル(西之島付近噴火活動)</a>',
+                tileSize: 256
+            });
+
+            // 産総研 シームレス標高タイルセット
+            // map.setTerrain({ 'source': 'aist-dem', 'exaggeration': 1 });
+
+            // 西之島付近噴火活動 正射画像ソース
+            map.addSource("gsi-ortho", {
+                "type": "raster",
+                "tiles": [
+                    "https://cyberjapandata.gsi.go.jp/xyz/" + ortho_layer[index] + "/{z}/{x}/{y}.png"
+                ],
+                "attribution": "<a href='https://maps.gsi.go.jp/development/ichiran.html#t20230202_nishinoshima_dol' target='_blank'>地理院タイル（西之島付近噴火活動 正射画像（" + date[index] + "））</a>",
+                "tileSize": 256
+            });
+
+            // 西之島付近噴火活動 正射画像レイヤ
+            map.addLayer({
+                id: 'gsi-ortho',
+                type: 'raster',
+                source: 'gsi-ortho',
+                minzoom: 10,
+                maxzoom: 18,
+                paint: {
+                    'raster-opacity': 1
+                }
+            });
+
+            document.getElementById('slider-value').textContent = date[index];
+
+        });
+
+        // addProtocolを設定
+        maplibregl.addProtocol('numpng', makeNumPngProtocol());
+
+    </script>
+</body>
+
+</html>
