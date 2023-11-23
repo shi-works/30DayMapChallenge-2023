@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+    <div style="width: 700px; height: 600px;">
+        <center>
+            <h3 style="color: black;"></h3>
+        </center>
+        <svg width="500" height="450"></svg>
+    </div>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <script>
+        var svg = d3.select("svg"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
+
+        var projection = d3.geoMollweide()
+            .scale(width / 1.7 / Math.PI)
+            .rotate([90, 0, 0])
+            .center([0, 20])
+            .translate([width / 2, height / 2]);
+
+        var path = d3.geoPath().projection(projection);
+
+        var graticule = d3.geoGraticule();
+
+        var g = svg.append("g");
+
+        g.append("path")
+            .datum(graticule)
+            .attr("class", "graticule")
+            .attr("d", path)
+            .style("fill", "none")
+            .style("stroke", "#ccc");
+
+        function update() {
+            g.selectAll("path").attr("d", path);
+        }
+
+        svg.call(d3.drag().on("drag", function () {
+            var rotate = projection.rotate();
+            var k = 0.8;
+            projection.rotate([rotate[0] + d3.event.dx * k, rotate[1] - d3.event.dy * k]);
+            update();
+        }));
+
+        d3.json("https://raw.githubusercontent.com/janasayantan/datageojson/master/world.json", function (data) {
+            g.selectAll(".country")
+                .data(data.features)
+                .enter().append("path")
+                .attr("class", "country")
+                .attr("fill", "black")
+                .attr("d", path)
+                .style("stroke", "#ffff");
+        });
+    </script>
+</body>
+
+</html>
