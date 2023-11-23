@@ -109,3 +109,5 @@ https://shi-works.github.io/30DayMapChallenge-2023/21_Raster/
 
 ![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/5eda21a3-ceb1-47a2-a000-c2a22b6e02da)
 
+## 22_North_is_not_always_up
+https://shi-works.github.io/30DayMapChallenge-2023/22_North_is_not_always_up/
