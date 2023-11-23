@@ -4,8 +4,8 @@
     <title>2.5次元マップ</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.js'></script>
-    <link href='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css' rel='stylesheet' />
+    <script src='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.4.1/dist/maplibre-gl.css' rel='stylesheet' />
     <script src="https://unpkg.com/pmtiles@2.10.0/dist/index.js"></script>
     <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.2.0/dist/maplibre-gl-geocoder.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.2.0/dist/maplibre-gl-geocoder.css"
@@ -89,8 +89,10 @@
             <input id="hillshade-slider-opacity" type="range" min="0" max="100" step="1" value="30">
         </div>
     </div>
+    <script type="module">
+        // Terrain-RGB形式への変換モジュール
+        import { makeNumPngProtocol } from './numPngProtocol.js'
 
-    <script type="text/javascript">
         // protocolを設定
         let protocol = new pmtiles.Protocol();
         maplibregl.addProtocol("pmtiles", protocol.tile);
@@ -190,18 +192,18 @@
         map.addControl(new MaplibreGeocoder(geocoder_api, { maplibregl: maplibregl }), 'top-left');
 
         map.on('load', () => {
-            // 地理院 標高タイルソース
-            map.addSource("gsidem-terrain-rgb", {
+            // 産総研 シームレス標高タイルソース
+            map.addSource("aist-dem", {
                 type: 'raster-dem',
                 tiles: [
-                    'https://smb.optgeo.org/ipfs/QmWGYxRhixi4itNhy1YWtYX9sBcYxuykwENNxDsWMfqNgh/{z}/{x}/{y}.webp',
+                    'numpng://tiles.gsj.jp/tiles/elev/mixed/{z}/{y}/{x}.png',
                 ],
-                attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html#dem" target="_blank">地理院タイル(標高タイル)</a>',
-                tileSize: 512
+                attribution: '<a href="https://tiles.gsj.jp/tiles/elev/tiles.html" target="_blank">産業技術総合研究所 シームレス標高タイル(統合DEM)</a>',
+                tileSize: 256
             });
 
-            // 地理院 標高タイルセット
-            map.setTerrain({ 'source': 'gsidem-terrain-rgb', 'exaggeration': 1 });
+            // 産総研 シームレス標高タイルセット
+            map.setTerrain({ 'source': 'aist-dem', 'exaggeration': 1 });
 
             // 法務省地図XMLソース
             map.addSource("pmtiles-moj-xml", {
@@ -352,6 +354,9 @@
             });
 
         });
+
+        // addProtocolを設定
+        maplibregl.addProtocol('numpng', makeNumPngProtocol());
 
         // ポップアップ表示
         map.on('click', 'lod1-building', (e) => {
