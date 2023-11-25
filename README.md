@@ -118,3 +118,6 @@ https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/d1b890bf-a2a
 https://shi-works.github.io/30DayMapChallenge-2023/23_3D/
 
 ![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/f089fb9b-eeb9-4263-a073-f25bcfaf8532)
+
+## 24_Black&white
+https://shi-works.github.io/30DayMapChallenge-2023/24_Black&white/
