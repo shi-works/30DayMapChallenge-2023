@@ -1,4 +1,4 @@
-# 30DayMapChallenge-2023
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/4f6121b0-662b-4d38-817c-b0b143c8e1e6)# 30DayMapChallenge-2023
 
 https://30daymapchallenge.com/
 
@@ -121,6 +121,8 @@ https://shi-works.github.io/30DayMapChallenge-2023/23_3D/
 
 ## 24_Black&white
 https://shi-works.github.io/30DayMapChallenge-2023/24_Black&white/
+
+![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/03835cbd-139f-4ffb-b60a-9cb15b72f93b)
 
 ## 25_Antarctica
 https://shi-works.github.io/30DayMapChallenge-2023/25_Antarctica/
