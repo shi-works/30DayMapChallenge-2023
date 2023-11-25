@@ -121,3 +121,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/23_3D/
 
 ## 24_Black&white
 https://shi-works.github.io/30DayMapChallenge-2023/24_Black&white/
+
+## 25_Antarctica
+https://shi-works.github.io/30DayMapChallenge-2023/25_Antarctica/
