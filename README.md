@@ -128,3 +128,6 @@ https://shi-works.github.io/30DayMapChallenge-2023/24_Black&white/
 https://shi-works.github.io/30DayMapChallenge-2023/25_Antarctica/
 
 ![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/5a9e0b73-3902-40d6-8bbd-80deb62fdf58)
+
+## 26_Minimal
+https://shi-works.github.io/30DayMapChallenge-2023/26_Minimal/
