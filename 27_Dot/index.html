@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Google 3D tiles example</title>
+    <meta charset="UTF-8">
+    <script src='https://unpkg.com/deck.gl@8.9.4/dist.min.js'></script>
+    <script src='https://unpkg.com/@luma.gl/shadertools@8.5.21/dist/dist.min.js'></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #control-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 12px;
+            padding: 10px;
+            font-size: 12px;
+            line-height: 1;
+            z-index: 1;
+            background: #fff;
+            font-family: Helvetica, Arial, sans-serif;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+        }
+
+        #credits {
+            position: absolute;
+            bottom: 0;
+            right: 5px;
+            padding: 2px;
+            font-size: 12px;
+            color: #000000;
+            text-shadow: none;
+            background-color: rgba(255, 255, 255, 1);
+            z-index: 1;
+        }
+
+        #credits a {
+            color: #000000;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="credits"></div>
+    <div id="control-panel">
+        <p><b>dot-size</b></p>
+        <div id="size-display"></div>
+        <input type="range" min="1" max="10" step="0.1" value="1" id="size-slider" />
+    </div>
+    <script>
+        const creditsElement = document.getElementById('credits');
+        creditsElement.innerHTML = `<a href="https://github.com/indigo-lab/plateau-lod2-mvt" target="_blank">indigo-lab</a>`;
+
+        const dotScreen = new deck.PostProcessEffect(luma.dotScreen, { size: 1 });
+
+        const deckgl = new deck.DeckGL({
+            container: 'map',
+            initialViewState: {
+                latitude: 35.688596,
+                longitude: 139.693247,
+                zoom: 16.24,
+                pitch: 65,
+                bearing: 29.9,
+                maxPitch: 85
+            },
+            controller: true,
+            effects: [dotScreen],
+            layers: [
+                new deck.MVTLayer({
+                    id: 'plateau-lod2-mvt',
+                    data: `https://indigo-lab.github.io/plateau-lod2-mvt/{z}/{x}/{y}.pbf`,
+                    minZoom: 10,
+                    maxZoom: 16,
+                    getFillColor: [255, 255, 255, 255],
+                    extruded: true,
+                    getElevation: d => d.properties.z,
+                    wireframe: true
+                })
+            ]
+        });
+
+        const sizeslider = document.getElementById('size-slider');
+        const sizeDisplay = document.getElementById('size-display');
+
+        sizeslider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            dotScreen.setProps({
+                size: value
+            });
+            sizeDisplay.innerHTML = value
+            deckgl.redraw(true);
+        });
+        sizeslider.dispatchEvent(new Event('input'));
+
+    </script>
+</body>
+
+</html>
