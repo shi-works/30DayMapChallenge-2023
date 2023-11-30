@@ -136,3 +136,6 @@ https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/32c8281c-c25
 
 ## 27_Dot
 https://shi-works.github.io/30DayMapChallenge-2023/27_Dot/
+
+## 28_Is_this_a_chart_or_a_map
+https://shi-works.github.io/30DayMapChallenge-2023/28_Is_this_a_chart_or_a_map/
