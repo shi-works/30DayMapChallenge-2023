@@ -1,4 +1,4 @@
-![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/4f6121b0-662b-4d38-817c-b0b143c8e1e6)# 30DayMapChallenge-2023
+# 30DayMapChallenge-2023
 
 https://30daymapchallenge.com/
 
