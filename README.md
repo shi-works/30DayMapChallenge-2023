@@ -148,3 +148,9 @@ https://shi-works.github.io/30DayMapChallenge-2023/28_Is_this_a_chart_or_a_map/
 https://shi-works.github.io/30DayMapChallenge-2023/29_Population/
 
 ![image](https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/ef71f588-60ee-4cf2-80ba-5554b69e0ef6)
+
+## 30_My_favorite
+https://shi-works.github.io/30DayMapChallenge-2023/30_My_favorite/
+
+https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/52e096a9-1a0a-496c-8c4b-1bac1e74ad12
+
