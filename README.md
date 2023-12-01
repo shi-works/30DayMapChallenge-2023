@@ -154,3 +154,8 @@ https://shi-works.github.io/30DayMapChallenge-2023/30_My_favorite/
 
 https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/52e096a9-1a0a-496c-8c4b-1bac1e74ad12
 
+## 31_Extra_edition
+https://shi-works.github.io/30DayMapChallenge-2023/31_Extra_edition/
+
+https://github.com/shi-works/30DayMapChallenge-2023/assets/71203808/6274381e-9a9b-409a-9e27-13af13722934
+
